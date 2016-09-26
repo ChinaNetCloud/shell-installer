@@ -145,3 +145,4 @@ opsstack-configure
 RES=$?
 
 exit ${RES}
+
