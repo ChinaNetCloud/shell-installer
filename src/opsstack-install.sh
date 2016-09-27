@@ -35,7 +35,7 @@ msg_skip() {
 
 # Check if running as root or with sudo
 msg_progress "Checking permissions..."
-if [ ! `id -u` = 0 ] ; then
+if [[ ! `id -u` = 0 ]] ; then
 	msg_err
 	error "Execute with sudo!"
 fi
@@ -44,11 +44,11 @@ msg_okay
 # Check which Linux distribution and version
 # and save them to variables
 msg_progress "Checking platform..."
-if [ -f "/etc/redhat-release" ]; then
+if [[ -f "/etc/redhat-release" ]] ; then
 	# Apparently redhat, but which one?
 	grep "CentOS" /etc/redhat-release > /dev/null 2>&1
 	RES=$?
-	if [ ${RES} = 0 ]; then
+	if [[ ${RES} = 0 ]] ; then
 		OS="CentOS"
 		# And what is the version
 		if [[ `cat /etc/redhat-release | awk '{print $3}'` == 6* ]] ; then
@@ -71,7 +71,7 @@ if [ -f "/etc/redhat-release" ]; then
 			error "Red Hat version not supported. Please refer to documentation."
 		fi
 	fi
-elif [ -f '/etc/system-release' ] && [[ `cat /etc/system-release` == Amazon* ]] ; then
+elif [[ -f '/etc/system-release' ]] && [[ `cat /etc/system-release` == Amazon* ]] ; then
 	# Definitely Amazon Linux then
 	OS="Amazon Linux"
 	# And what is the version
@@ -96,42 +96,42 @@ msg "Detected $OS version $OSVER"
 
 # Install repository
 msg_progress "Adding repository..."
-if [ ${OS} == "CentOS" ] || [ ${OS} == "RHEL" ] ; then
+if [[ ${OS} == "CentOS" ]] || [[ ${OS} == "RHEL" ]] ; then
 	REPO="https://repo.service.chinanetcloud.com/yum/el${OSVER}/base/x86_64/nc-repo-1.0.0-1.el${OSVER}.noarch.rpm"
 	# Check if repo already installed
 	rpm -qa | grep nc-repo  > /dev/null 2>&1
 	RES=$?
-	if [ ${RES} = 0 ] ; then
+	if [[ ${RES} = 0 ]] ; then
 		yum reinstall ${REPO} -y > /dev/null 2>&1
 		RES=$?
-		if [ ! ${RES} = 0 ]; then
+		if [[ ! ${RES} = 0 ]] ; then
 			msg_err
 			error "Error installing repository. Please refer to documentation."
 		fi
 	else
 		yum install ${REPO} -y > /dev/null 2>&1
 		RES=$?
-		if [ ! ${RES} = 0 ]; then
+		if [[ ! ${RES} = 0 ]] ; then
 			msg_err
 			error "Error installing repository. Please refer to documentation."
 		fi
 	fi
-elif [ ${OS} == "Amazon Linux" ] ; then
+elif [[ ${OS} == "Amazon Linux" ]] ; then
 	REPO="https://repo.service.chinanetcloud.com/yum/el6/base/x86_64/nc-repo-1.0.0-1.el6.noarch.rpm"
 	# Check if repo already installed
 	rpm -qa | grep nc-repo  > /dev/null 2>&1
 	RES=$?
-	if [ ${RES} = 0 ] ; then
+	if [[ ${RES} = 0 ]] ; then
 		yum reinstall ${REPO} -y > /dev/null 2>&1
 		RES=$?
-		if [ ! ${RES} = 0 ]; then
+		if [[ ! ${RES} = 0 ]] ; then
 			msg_err
 			error "Error installing repository. Please refer to documentation."
 		fi
 	else
 		yum install ${REPO} -y > /dev/null 2>&1
 		RES=$?
-		if [ ! ${RES} = 0 ]; then
+		if [[ ! ${RES} = 0 ]] ; then
 			msg_err
 			error "Error installing repository. Please refer to documentation."
 		fi
@@ -151,40 +151,40 @@ msg_okay
 
 # Install packages
 msg_progress "Installing packages..."
-if [ ${OS} == "CentOS" ] || [ ${OS} == "RHEL" ] ; then
+if [[ ${OS} == "CentOS" ]] || [[ ${OS} == "RHEL" ]] ; then
 	# Check if package already installed
 	rpm -qa | grep opsstack-tools > /dev/null 2>&1
 	RES=$?
-	if [ ${RES} = 0 ] ; then
+	if [[ ${RES} = 0 ]] ; then
 		yum reinstall opsstack-tools -y > /dev/null 2>&1
 		RES=$?
-		if [ ! ${RES} = 0 ]; then
+		if [[ ! ${RES} = 0 ]] ; then
 			msg_err
 			error "Error installing packages. Please refer to documentation."
 		fi
 	else
 		yum install opsstack-tools -y > /dev/null 2>&1
 		RES=$?
-		if [ ! ${RES} = 0 ]; then
+		if [[ ! ${RES} = 0 ]] ; then
 			msg_err
 			error "Error installing packages. Please refer to documentation."
 		fi
 	fi
-elif [ ${OS} == "Amazon Linux" ] ; then
+elif [[ ${OS} == "Amazon Linux" ]] ; then
 	# Check if opsstack-common already installed
 	rpm -qa | grep opsstack-common > /dev/null 2>&1
 	RES=$?
-	if [ ${RES} = 0 ] ; then
+	if [[ ${RES} = 0 ]] ; then
 		yum reinstall opsstack-common --disablerepo=* --enablerepo=cnc_amzn -y > /dev/null 2>&1
 		RES=$?
-		if [ ! ${RES} = 0 ]; then
+		if [[ ! ${RES} = 0 ]] ; then
 			msg_err
 			error "Error installing packages. Please refer to documentation."
 		fi
 	else
 		yum install opsstack-common --disablerepo=* --enablerepo=cnc_amzn -y > /dev/null 2>&1
 		RES=$?
-		if [ ! ${RES} = 0 ]; then
+		if [[ ! ${RES} = 0 ]] ; then
 			msg_err
 			error "Error installing packages. Please refer to documentation."
 		fi
@@ -192,17 +192,17 @@ elif [ ${OS} == "Amazon Linux" ] ; then
 	# Check if opsstack-tools package already installed
 	rpm -qa | grep opsstack-tools > /dev/null 2>&1
 	RES=$?
-	if [ ${RES} = 0 ] ; then
+	if [[ ${RES} = 0 ]] ; then
 		yum reinstall opsstack-tools -y > /dev/null 2>&1
 		RES=$?
-		if [ ! ${RES} = 0 ]; then
+		if [[ ! ${RES} = 0 ]] ; then
 			msg_err
 			error "Error installing packages. Please refer to documentation."
 		fi
 	else
 		yum install opsstack-tools -y > /dev/null 2>&1
 		RES=$?
-		if [ ! ${RES} = 0 ]; then
+		if [[ ! ${RES} = 0 ]] ; then
 			msg_err
 			error "Error installing packages. Please refer to documentation."
 		fi
