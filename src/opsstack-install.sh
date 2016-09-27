@@ -53,7 +53,6 @@ if [ -f "/etc/redhat-release" ]; then
 		# And what is the version
 		if [[ `cat /etc/redhat-release | awk '{print $3}'` == 6* ]] ; then
 			OSVER="6"
-                # CentOS 7 now includes "Linux" in the release string...
 		elif [[ `cat /etc/redhat-release | awk '{print $4}'` == 7* ]] ; then
 			OSVER="7"
 		else
