@@ -175,14 +175,14 @@ elif [[ ${OS} == "Amazon Linux" ]] ; then
 	rpm -qa | grep opsstack-common > /dev/null 2>&1
 	RES=$?
 	if [[ ${RES} = 0 ]] ; then
-		yum reinstall opsstack-common --disablerepo=* --enablerepo=cnc_amzn -y > /dev/null 2>&1
+		yum reinstall opsstack-common --disablerepo=cnc --enablerepo=cnc_amzn -y > /dev/null 2>&1
 		RES=$?
 		if [[ ! ${RES} = 0 ]] ; then
 			msg_err
 			error "Error installing packages. Please refer to documentation."
 		fi
 	else
-		yum install opsstack-common --disablerepo=* --enablerepo=cnc_amzn -y > /dev/null 2>&1
+		yum install opsstack-common --disablerepo=cnc --enablerepo=cnc_amzn -y > /dev/null 2>&1
 		RES=$?
 		if [[ ! ${RES} = 0 ]] ; then
 			msg_err
