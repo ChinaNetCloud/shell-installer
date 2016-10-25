@@ -222,5 +222,10 @@ echo ""
 opsstack-configure
 RES=$?
 
-exit ${RES}
+# Execute opsstack-install only if opsstack-configure exit with 0
+if [[ ${RES} = 0 ]]; then
+    opsstack-install
+    RES=$?
+fi
 
+exit ${RES}
