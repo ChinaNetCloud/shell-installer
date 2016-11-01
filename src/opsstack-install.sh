@@ -117,7 +117,7 @@ if [[ ${OS} == "CentOS" ]] || [[ ${OS} == "RHEL" ]] ; then
 		fi
 	fi
 elif [[ ${OS} == "Amazon Linux" ]] ; then
-	REPO="https://repo.service.chinanetcloud.com/yum/el6/base/x86_64/nc-repo-1.0.0-1.el6.noarch.rpm"
+	REPO="https://repo.service.chinanetcloud.com/yum/amzn/base/x86_64/nc-repo-1.0.0-1.amzn.noarch.rpm"
 	# Check if repo already installed
 	rpm -qa | grep nc-repo  > /dev/null 2>&1
 	RES=$?
@@ -136,60 +136,13 @@ elif [[ ${OS} == "Amazon Linux" ]] ; then
 			error "Error installing repository. Please refer to documentation."
 		fi
 	fi
-	# For Amazon need to add an extra repo to the list
-	cat >> /etc/yum.repos.d/CNC.repo << 'EOF'
-
-[cnc_amzn]
-name=cnc_amzn
-baseurl=http://repo.service.chinanetcloud.com/yum/amzn/base/$basearch/
-gpgcheck=1
-enabled=0
-gpgkey=http://repo.service.chinanetcloud.com/yum/rpm-gpg/RPM-GPG-KEY-CNC
-EOF
 fi
 msg_okay
 
 # Install packages
 msg_progress "Installing packages..."
-if [[ ${OS} == "CentOS" ]] || [[ ${OS} == "RHEL" ]] ; then
+if [[ ${OS} == "CentOS" ]] || [[ ${OS} == "RHEL" ]] || [[ ${OS} == "Amazon Linux" ]] ; then
 	# Check if package already installed
-	rpm -qa | grep opsstack-tools > /dev/null 2>&1
-	RES=$?
-	if [[ ${RES} = 0 ]] ; then
-		yum reinstall opsstack-tools -y > /dev/null 2>&1
-		RES=$?
-		if [[ ! ${RES} = 0 ]] ; then
-			msg_err
-			error "Error installing packages. Please refer to documentation."
-		fi
-	else
-		yum install opsstack-tools -y > /dev/null 2>&1
-		RES=$?
-		if [[ ! ${RES} = 0 ]] ; then
-			msg_err
-			error "Error installing packages. Please refer to documentation."
-		fi
-	fi
-elif [[ ${OS} == "Amazon Linux" ]] ; then
-	# Check if opsstack-common already installed
-	rpm -qa | grep opsstack-common > /dev/null 2>&1
-	RES=$?
-	if [[ ${RES} = 0 ]] ; then
-		yum reinstall opsstack-common --disablerepo=cnc --enablerepo=cnc_amzn -y > /dev/null 2>&1
-		RES=$?
-		if [[ ! ${RES} = 0 ]] ; then
-			msg_err
-			error "Error installing packages. Please refer to documentation."
-		fi
-	else
-		yum install opsstack-common --disablerepo=cnc --enablerepo=cnc_amzn -y > /dev/null 2>&1
-		RES=$?
-		if [[ ! ${RES} = 0 ]] ; then
-			msg_err
-			error "Error installing packages. Please refer to documentation."
-		fi
-	fi
-	# Check if opsstack-tools package already installed
 	rpm -qa | grep opsstack-tools > /dev/null 2>&1
 	RES=$?
 	if [[ ${RES} = 0 ]] ; then
