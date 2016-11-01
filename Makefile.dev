@@ -3,4 +3,6 @@ AGGREGATE_PATH=/repo-aggregate-dev
 
 .PHONY: deploy
 deploy:
+	sed -i 's/repo.service/repo-dev.service/g' $(SRC_DIR)/src/opsstack-install.sh
 	cp $(SRC_DIR)/src/opsstack-install.sh $(AGGREGATE_PATH)/ || true
+	sed -i 's/repo-dev.service/repo.service/g' $(SRC_DIR)/src/opsstack-install.sh
