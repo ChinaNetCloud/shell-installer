@@ -88,8 +88,8 @@ elif [[ -f '/etc/debian_version' ]]; then
     command -V lsb_release > /dev/null 2>&1
     RES=$?
 	if [[ ${RES} = 0 ]] ; then
-	    OS_DESC = `lsb_release -i | awk '{print $2}'`
-	    OS_RELEASE = `lsb_release -r | awk '{print $2}'`
+	    OS_DESC=`lsb_release -i | awk '{print $3}'`
+	    OS_RELEASE=`lsb_release -r | awk '{print $2}'`
 	    if [[ ${OS_DESC} == Ubuntu* ]]; then
 	       OS="Ubuntu"
 	       if [[ ${OS_RELEASE} == 12.* ]]; then
@@ -98,7 +98,7 @@ elif [[ -f '/etc/debian_version' ]]; then
 	           OSVER="trusty"
 	       elif [[ ${OS_RELEASE} == 16.* ]]; then
 	           OSVER="xenial"
-	       else:
+	       else
 	           msg_err
 	           error "Ubuntu Linux version not supported. Please refer to documentation."
 	       fi
@@ -165,13 +165,13 @@ elif [[ ${OS} == "Ubuntu" ]] ; then
     if [[ ! ${RES} = 0 ]] ; then
         msg_err
         error "Error downloading nc-repo package. Please refer to documentation."
-    else:
+    else
         dpkg -i /tmp/nc-repo_1.0.0-1.ubuntu.deb > /dev/null 2>&1
         if [[ ! ${RES} = 0 ]] ; then
             msg_err
             error "Error installing repository. Please refer to documentation."
         fi
-        apt-get updatedb > /dev/null 2>&1
+        apt-get update > /dev/null 2>&1
     fi
 fi
 msg_okay
@@ -208,7 +208,7 @@ elif [[ ${OS} == "Ubuntu" ]]; then
 			msg_err
 			error "Error installing packages. Please refer to documentation."
 		fi
-	else:
+	else
 	    apt-get install opsstack-tools -y > /dev/null 2>&1
 		RES=$?
 		if [[ ! ${RES} = 0 ]] ; then
