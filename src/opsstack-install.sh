@@ -171,7 +171,6 @@ elif [[ ${OS} == "Ubuntu" ]] ; then
             msg_err
             error "Error installing repository. Please refer to documentation."
         fi
-        apt-get update > /dev/null 2>&1
     fi
 fi
 msg_okay
@@ -198,6 +197,8 @@ if [[ ${OS} == "CentOS" ]] || [[ ${OS} == "RHEL" ]] || [[ ${OS} == "Amazon Linux
 		fi
 	fi
 elif [[ ${OS} == "Ubuntu" ]]; then
+    # Before installing package, update repository first
+    apt-get update > /dev/null 2>&1
     # Check if package already installed
     dpkg -l |grep opsstack-tools > /dev/null 2>&1
     RES=$?
