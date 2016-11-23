@@ -92,12 +92,13 @@ elif [[ -f '/etc/debian_version' ]]; then
 	    OS_RELEASE=`lsb_release -r | awk '{print $2}'`
 	    if [[ ${OS_DESC} == Ubuntu* ]]; then
 	       OS="Ubuntu"
+	       OSVER=${OS_RELEASE}
 	       if [[ ${OS_RELEASE} == 12.* ]]; then
-	           OSVER="precise"
+	           UBUNTU_OSVER="precise"
 	       elif [[ ${OS_RELEASE} == 14.* ]]; then
-	           OSVER="trusty"
+	           UBUNTU_OSVER="trusty"
 	       elif [[ ${OS_RELEASE} == 16.* ]]; then
-	           OSVER="xenial"
+	           UBUNTU_OSVER="xenial"
 	       else
 	           msg_err
 	           error "Ubuntu Linux version not supported. Please refer to documentation."
@@ -158,7 +159,7 @@ elif [[ ${OS} == "Amazon Linux" ]] ; then
 		fi
 	fi
 elif [[ ${OS} == "Ubuntu" ]] ; then
-    REPO="http://repo-dev.service.chinanetcloud.com/apt/ubuntu/pool/${OSVER}/main/nc-repo_1.0.0-1.ubuntu%2B${OSVER}_all.deb"
+    REPO="http://repo-dev.service.chinanetcloud.com/apt/ubuntu/pool/${UBUNTU_OSVER}/main/nc-repo_1.0.0-1.ubuntu%2B${UBUNTU_OSVER}_all.deb"
     # Download repo package and install it
     wget -q ${REPO} -O /tmp/nc-repo_1.0.0-1.ubuntu.deb > /dev/null 2>&1
     RES=$?
