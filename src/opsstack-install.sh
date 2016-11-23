@@ -83,6 +83,28 @@ elif [[ -f '/etc/system-release' ]] && [[ `cat /etc/system-release` == Amazon* ]
 		msg_err
 		error "Amazon Linux version not supported. Please refer to documentation."
 	fi
+elif [[ -f '/etc/debian_version' ]]; then
+    # Apparently debian, but which one?
+    command -V lsb_release > /dev/null 2>&1
+    RES=$?
+	if [[ ${RES} = 0 ]] ; then
+	    OS_DESC=`lsb_release -i | awk '{print $3}'`
+	    OS_RELEASE=`lsb_release -r | awk '{print $2}'`
+	    if [[ ${OS_DESC} == Ubuntu* ]]; then
+	       OS="Ubuntu"
+	       OSVER=${OS_RELEASE}
+	       if [[ ${OS_RELEASE} == 12.* ]]; then
+	           UBUNTU_OSVER="precise"
+	       elif [[ ${OS_RELEASE} == 14.* ]]; then
+	           UBUNTU_OSVER="trusty"
+	       elif [[ ${OS_RELEASE} == 16.* ]]; then
+	           UBUNTU_OSVER="xenial"
+	       else
+	           msg_err
+	           error "Ubuntu Linux version not supported. Please refer to documentation."
+	       fi
+	    fi
+	fi
 else
 	msg_err
 	error "Unsupported Linux distribution!"
@@ -117,7 +139,7 @@ if [[ ${OS} == "CentOS" ]] || [[ ${OS} == "RHEL" ]] ; then
 		fi
 	fi
 elif [[ ${OS} == "Amazon Linux" ]] ; then
-	REPO="https://repo.service.chinanetcloud.com/yum/el6/base/x86_64/nc-repo-1.0.0-1.el6.noarch.rpm"
+	REPO="https://repo.service.chinanetcloud.com/yum/amzn/base/x86_64/nc-repo-1.0.0-1.amzn.noarch.rpm"
 	# Check if repo already installed
 	rpm -qa | grep nc-repo  > /dev/null 2>&1
 	RES=$?
@@ -136,22 +158,27 @@ elif [[ ${OS} == "Amazon Linux" ]] ; then
 			error "Error installing repository. Please refer to documentation."
 		fi
 	fi
-	# For Amazon need to add an extra repo to the list
-	cat >> /etc/yum.repos.d/CNC.repo << 'EOF'
-
-[cnc_amzn]
-name=cnc_amzn
-baseurl=http://repo.service.chinanetcloud.com/yum/amzn/base/$basearch/
-gpgcheck=1
-enabled=0
-gpgkey=http://repo.service.chinanetcloud.com/yum/rpm-gpg/RPM-GPG-KEY-CNC
-EOF
+elif [[ ${OS} == "Ubuntu" ]] ; then
+    REPO="http://repo-dev.service.chinanetcloud.com/apt/ubuntu/pool/${UBUNTU_OSVER}/main/nc-repo_1.0.0-1.ubuntu%2B${UBUNTU_OSVER}_all.deb"
+    # Download repo package and install it
+    wget -q ${REPO} -O /tmp/nc-repo_1.0.0-1.ubuntu.deb > /dev/null 2>&1
+    RES=$?
+    if [[ ! ${RES} = 0 ]] ; then
+        msg_err
+        error "Error downloading nc-repo package. Please refer to documentation."
+    else
+        dpkg -i /tmp/nc-repo_1.0.0-1.ubuntu.deb > /dev/null 2>&1
+        if [[ ! ${RES} = 0 ]] ; then
+            msg_err
+            error "Error installing repository. Please refer to documentation."
+        fi
+    fi
 fi
 msg_okay
 
 # Install packages
 msg_progress "Installing packages..."
-if [[ ${OS} == "CentOS" ]] || [[ ${OS} == "RHEL" ]] ; then
+if [[ ${OS} == "CentOS" ]] || [[ ${OS} == "RHEL" ]] || [[ ${OS} == "Amazon Linux" ]] ; then
 	# Check if package already installed
 	rpm -qa | grep opsstack-tools > /dev/null 2>&1
 	RES=$?
@@ -170,37 +197,21 @@ if [[ ${OS} == "CentOS" ]] || [[ ${OS} == "RHEL" ]] ; then
 			error "Error installing packages. Please refer to documentation."
 		fi
 	fi
-elif [[ ${OS} == "Amazon Linux" ]] ; then
-	# Check if opsstack-common already installed
-	rpm -qa | grep opsstack-common > /dev/null 2>&1
-	RES=$?
-	if [[ ${RES} = 0 ]] ; then
-		yum reinstall opsstack-common --disablerepo=cnc --enablerepo=cnc_amzn -y > /dev/null 2>&1
+elif [[ ${OS} == "Ubuntu" ]]; then
+    # Before installing package, update repository first
+    apt-get update > /dev/null 2>&1
+    # Check if package already installed
+    dpkg -l |grep opsstack-tools > /dev/null 2>&1
+    RES=$?
+    if [[ ${RES} = 0 ]] ; then
+        apt-get install --reinstall opsstack-tools -y > /dev/null 2>&1
 		RES=$?
 		if [[ ! ${RES} = 0 ]] ; then
 			msg_err
 			error "Error installing packages. Please refer to documentation."
 		fi
 	else
-		yum install opsstack-common --disablerepo=cnc --enablerepo=cnc_amzn -y > /dev/null 2>&1
-		RES=$?
-		if [[ ! ${RES} = 0 ]] ; then
-			msg_err
-			error "Error installing packages. Please refer to documentation."
-		fi
-	fi
-	# Check if opsstack-tools package already installed
-	rpm -qa | grep opsstack-tools > /dev/null 2>&1
-	RES=$?
-	if [[ ${RES} = 0 ]] ; then
-		yum reinstall opsstack-tools -y > /dev/null 2>&1
-		RES=$?
-		if [[ ! ${RES} = 0 ]] ; then
-			msg_err
-			error "Error installing packages. Please refer to documentation."
-		fi
-	else
-		yum install opsstack-tools -y > /dev/null 2>&1
+	    apt-get install opsstack-tools -y > /dev/null 2>&1
 		RES=$?
 		if [[ ! ${RES} = 0 ]] ; then
 			msg_err
