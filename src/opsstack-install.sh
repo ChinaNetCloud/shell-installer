@@ -220,7 +220,7 @@ elif [[ ${OS} == "Ubuntu" ]]; then
             msg_err
             error "Error installing packages. Please refer to documentation."
         fi
-fi
+    fi
 fi
 msg_okay
 
