@@ -159,7 +159,7 @@ elif [[ ${OS} == "Amazon Linux" ]] ; then
 		fi
 	fi
 elif [[ ${OS} == "Ubuntu" ]] ; then
-    REPO="http://repo-dev.service.chinanetcloud.com/apt/ubuntu/pool/${UBUNTU_OSVER}/main/nc-repo_1.0.0-1.ubuntu%2B${UBUNTU_OSVER}_all.deb"
+    REPO="http://repo.service.chinanetcloud.com/apt/ubuntu/pool/${UBUNTU_OSVER}/main/nc-repo_1.0.0-1.ubuntu%2B${UBUNTU_OSVER}_all.deb"
     # Download repo package and install it
     wget -q ${REPO} -O /tmp/nc-repo_1.0.0-1.ubuntu.deb > /dev/null 2>&1
     RES=$?
