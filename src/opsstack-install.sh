@@ -84,26 +84,29 @@ elif [[ -f '/etc/system-release' ]] && [[ `cat /etc/system-release` == Amazon* ]
 		error "Amazon Linux version not supported. Please refer to documentation."
 	fi
 elif [[ -f '/etc/debian_version' ]]; then
-    # Apparently debian, but which one?
-    command -V lsb_release > /dev/null 2>&1
-    RES=$?
+        # Apparently debian, but which one?
+        command -V lsb_release > /dev/null 2>&1
+        RES=$?
 	if [[ ${RES} = 0 ]] ; then
-	    OS_DESC=`lsb_release -i | awk '{print $3}'`
-	    OS_RELEASE=`lsb_release -r | awk '{print $2}'`
-	    if [[ ${OS_DESC} == Ubuntu* ]]; then
-	       OS="Ubuntu"
-	       OSVER=${OS_RELEASE}
-	       if [[ ${OS_RELEASE} == 12.* ]]; then
-	           UBUNTU_OSVER="precise"
-	       elif [[ ${OS_RELEASE} == 14.* ]]; then
-	           UBUNTU_OSVER="trusty"
-	       elif [[ ${OS_RELEASE} == 16.* ]]; then
-	           UBUNTU_OSVER="xenial"
-	       else
-	           msg_err
-	           error "Ubuntu Linux version not supported. Please refer to documentation."
-	       fi
-	    fi
+	        OS_DESC=`lsb_release -i | awk '{print $3}'`
+	        OS_RELEASE=`lsb_release -r | awk '{print $2}'`
+	        if [[ ${OS_DESC} == Ubuntu* ]]; then
+	                OS="Ubuntu"
+	                OSVER=${OS_RELEASE}
+	                if [[ ${OS_RELEASE} == 12.* ]]; then
+	                        UBUNTU_OSVER="precise"
+	                elif [[ ${OS_RELEASE} == 14.* ]]; then
+	                        UBUNTU_OSVER="trusty"
+	                elif [[ ${OS_RELEASE} == 16.* ]]; then
+	                        UBUNTU_OSVER="xenial"
+	                else
+	                        msg_err
+	                        error "Ubuntu Linux version not supported. Please refer to documentation."
+	                fi
+                else
+                        msg_err
+                        error "Unsupported Debian Version!"
+	        fi
 	fi
 else
 	msg_err
@@ -159,20 +162,20 @@ elif [[ ${OS} == "Amazon Linux" ]] ; then
 		fi
 	fi
 elif [[ ${OS} == "Ubuntu" ]] ; then
-    REPO="http://repo.service.chinanetcloud.com/apt/ubuntu/pool/${UBUNTU_OSVER}/main/nc-repo_1.0.0-1.ubuntu%2B${UBUNTU_OSVER}_all.deb"
-    # Download repo package and install it
-    wget -q ${REPO} -O /tmp/nc-repo_1.0.0-1.ubuntu.deb > /dev/null 2>&1
-    RES=$?
-    if [[ ! ${RES} = 0 ]] ; then
-        msg_err
-        error "Error downloading nc-repo package. Please refer to documentation."
-    else
-        dpkg -i /tmp/nc-repo_1.0.0-1.ubuntu.deb > /dev/null 2>&1
+        REPO="http://repo.service.chinanetcloud.com/apt/ubuntu/pool/${UBUNTU_OSVER}/main/nc-repo_1.0.0-1.ubuntu%2B${UBUNTU_OSVER}_all.deb"
+        # Download repo package and install it
+        wget -q ${REPO} -O /tmp/nc-repo_1.0.0-1.ubuntu.deb > /dev/null 2>&1
+        RES=$?
         if [[ ! ${RES} = 0 ]] ; then
-            msg_err
-            error "Error installing repository. Please refer to documentation."
+                msg_err
+                error "Error downloading nc-repo package. Please refer to documentation."
+        else
+                dpkg -i /tmp/nc-repo_1.0.0-1.ubuntu.deb > /dev/null 2>&1
+                if [[ ! ${RES} = 0 ]] ; then
+                        msg_err
+                        error "Error installing repository. Please refer to documentation."
+                fi
         fi
-    fi
 fi
 msg_okay
 
@@ -198,21 +201,21 @@ if [[ ${OS} == "CentOS" ]] || [[ ${OS} == "RHEL" ]] || [[ ${OS} == "Amazon Linux
 		fi
 	fi
 elif [[ ${OS} == "Ubuntu" ]]; then
-    # Before installing package, update repository first
-    apt-get update > /dev/null 2>&1
-    # Check if package already installed
-    dpkg -l |grep opsstack-tools > /dev/null 2>&1
-    RES=$?
-    if [[ ${RES} = 0 ]] ; then
-        apt-get install --reinstall opsstack-tools -y > /dev/null 2>&1
+        # Before installing package, update repository first
+        apt-get update > /dev/null 2>&1
+        # Check if package already installed
+        dpkg -l |grep opsstack-tools > /dev/null 2>&1
+        RES=$?
+        if [[ ${RES} = 0 ]] ; then
+                apt-get install --reinstall opsstack-tools -y > /dev/null 2>&1
 		RES=$?
 		if [[ ! ${RES} = 0 ]] ; then
 			msg_err
 			error "Error installing packages. Please refer to documentation."
 		fi
 	else
-	    apt-get install opsstack-tools -y > /dev/null 2>&1
-		RES=$?
+	        apt-get install opsstack-tools -y > /dev/null 2>&1
+	        RES=$?
 		if [[ ! ${RES} = 0 ]] ; then
 			msg_err
 			error "Error installing packages. Please refer to documentation."
