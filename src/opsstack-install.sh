@@ -93,19 +93,19 @@ elif [[ -f '/etc/debian_version' ]]; then
 	        if [[ ${OS_DESC} == Ubuntu* ]]; then
 	                OS="Ubuntu"
 	                OSVER=${OS_RELEASE}
-	                        if [[ ${OS_RELEASE} == 12.* ]]; then
-	                                UBUNTU_OSVER="precise"
-	                        elif [[ ${OS_RELEASE} == 14.* ]]; then
-	                                UBUNTU_OSVER="trusty"
-	                        elif [[ ${OS_RELEASE} == 16.* ]]; then
-	                                UBUNTU_OSVER="xenial"
-	                        else
-	                                msg_err
-	                                error "Ubuntu Linux version not supported. Please refer to documentation."
-	                        fi
+	                if [[ ${OS_RELEASE} == 12.* ]]; then
+	                        UBUNTU_OSVER="precise"
+	                elif [[ ${OS_RELEASE} == 14.* ]]; then
+	                        UBUNTU_OSVER="trusty"
+	                elif [[ ${OS_RELEASE} == 16.* ]]; then
+	                        UBUNTU_OSVER="xenial"
+	                else
+	                        msg_err
+	                        error "Ubuntu Linux version not supported. Please refer to documentation."
+	                fi
                 else
                         msg_err
-                        error "Unsupported Linux distribution!"
+                        error "Unsupported Debian Version!"
 	        fi
 	fi
 else
