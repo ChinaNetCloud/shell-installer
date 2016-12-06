@@ -103,6 +103,48 @@ elif [[ -f '/etc/debian_version' ]]; then
                 msg_err
                 error "Ubuntu Linux version not supported. Please refer to documentation."
             fi
+        elif [[ ${OS_DESC} == Debian* ]]; then
+            OS="Debian"
+            OSVER=${OS_RELEASE}
+            if [[ ${OS_RELEASE} == 8.* ]]; then
+                DEBIAN_OSVER="jessie"
+            elif [[ ${OS_RELEASE} == 7.* ]]; then
+                DEBIAN_OSVER="wheezy"
+            else
+                msg_err
+                error "Unsupported Debian Version!"
+            fi
+        else
+            msg_err
+            error "Unsupported Debian Version!"
+        fi
+    else
+        if [[ `cat /etc/debian_version` == [jsw]* ]]; then
+            OS="Ubuntu"
+            if [[ `cat /etc/debian_version` == wheezy* ]]; then
+                OSVER="12"
+                UBUNTU_OSVER="precise"
+            elif [[ `cat /etc/debian_version` == jessie* ]]; then
+                OSVER="14"
+                UBUNTU_OSVER="trusty"
+            elif [[ `cat /etc/debian_version` == stretch* ]]; then
+                OSVER="16"
+                UBUNTU_OSVER="xenial"
+            else
+                msg_err
+                error "Ubuntu Linux version not supported. Please refer to documentation."
+            fi
+        elif [[ `cat /etc/debian_version` == [78].* ]]; then
+            OS="Debian"
+            OSVER=`cat /etc/debian_version`
+            if [[ `cat /etc/debian_version` == 7.* ]]; then
+                DEBIAN_OSVER="wheezy"
+            elif [[ `cat /etc/debian_version` == 8.* ]]; then
+                DEBIAN_OSVER="jessie"
+            else
+                msg_err
+                error "Unsupported Debian Version!"
+            fi
         else
             msg_err
             error "Unsupported Debian Version!"
@@ -176,6 +218,21 @@ elif [[ ${OS} == "Ubuntu" ]] ; then
                 error "Error installing repository. Please refer to documentation."
         fi
     fi
+elif [[ ${OS} == "Debian" ]] ; then
+    REPO="http://repo.service.chinanetcloud.com/apt/debian/pool/${DEBIAN_OSVER}/main/nc-repo_1.0.0-1.debian%2B${DEBIAN_OSVER}_all.deb"
+    # Download repo package and install it
+    wget -q ${REPO} -O /tmp/nc-repo_1.0.0-1.debian.deb > /dev/null 2>&1
+    RES=$?
+    if [[ ! ${RES} = 0 ]] ; then
+        msg_err
+        error "Error downloading nc-repo package. Please refer to documentation."
+    else
+        dpkg -i /tmp/nc-repo_1.0.0-1.debian.deb > /dev/null 2>&1
+        if [[ ! ${RES} = 0 ]] ; then
+                msg_err
+                error "Error installing repository. Please refer to documentation."
+        fi
+    fi
 fi
 msg_okay
 
@@ -200,7 +257,7 @@ if [[ ${OS} == "CentOS" ]] || [[ ${OS} == "RHEL" ]] || [[ ${OS} == "Amazon Linux
             error "Error installing packages. Please refer to documentation."
         fi
     fi
-elif [[ ${OS} == "Ubuntu" ]]; then
+elif [[ ${OS} == "Ubuntu" ]] || [[ ${OS} == "Debian" ]]; then
     # Before installing package, update repository first
     apt-get update > /dev/null 2>&1
     # Check if package already installed
