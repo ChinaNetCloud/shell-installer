@@ -213,6 +213,7 @@ elif [[ ${OS} == "Ubuntu" ]] ; then
         error "Error downloading nc-repo package. Please refer to documentation."
     else
         dpkg -i /tmp/nc-repo_1.0.0-1.ubuntu.deb > /dev/null 2>&1
+        RES=$?
         if [[ ! ${RES} = 0 ]] ; then
                 msg_err
                 error "Error installing repository. Please refer to documentation."
@@ -228,6 +229,7 @@ elif [[ ${OS} == "Debian" ]] ; then
         error "Error downloading nc-repo package. Please refer to documentation."
     else
         dpkg -i /tmp/nc-repo_1.0.0-1.debian.deb > /dev/null 2>&1
+        RES=$?
         if [[ ! ${RES} = 0 ]] ; then
                 msg_err
                 error "Error installing repository. Please refer to documentation."
