@@ -281,63 +281,6 @@ elif [[ ${OS} == "Ubuntu" ]] || [[ ${OS} == "Debian" ]]; then
         fi
     fi
 fi
-
-# Temporarily fix mysql bug
-if [[ ${OS} == "CentOS" ]] || [[ ${OS} == "RHEL" ]] ; then
-    rpm -qa | grep MySQL-python > /dev/null 2>&1
-    RES=$?
-    if [[ ${RES} = 0 ]] ; then
-        yum reinstall MySQL-python.x86_64 -y > /dev/null 2>&1
-        RES=$?
-        if [[ ! ${RES} = 0 ]] ; then
-            msg_err
-            error "Error installing packages. Please refer to documentation."
-        fi
-    else
-        yum install MySQL-python.x86_64 -y > /dev/null 2>&1
-        RES=$?
-        if [[ ! ${RES} = 0 ]] ; then
-            msg_err
-            error "Error installing packages. Please refer to documentation."
-        fi
-    fi
-elif [[ ${OS} == "Amazon Linux" ]] ; then
-    rpm -qa | grep MySQL-python27 > /dev/null 2>&1
-    RES=$?
-    if [[ ${RES} = 0 ]] ; then
-        yum reinstall MySQL-python27.x86_64 -y > /dev/null 2>&1
-        RES=$?
-        if [[ ! ${RES} = 0 ]] ; then
-            msg_err
-            error "Error installing packages. Please refer to documentation."
-        fi
-    else
-        yum install MySQL-python27.x86_64 -y > /dev/null 2>&1
-        RES=$?
-        if [[ ! ${RES} = 0 ]] ; then
-            msg_err
-            error "Error installing packages. Please refer to documentation."
-        fi
-    fi
-elif [[ ${OS} == "Ubuntu" ]] || [[ ${OS} == "Debian" ]]; then
-    dpkg -l |grep python-mysqldb > /dev/null 2>&1
-    RES=$?
-    if [[ ${RES} = 0 ]] ; then
-        apt-get install --reinstall python-mysqldb -y > /dev/null 2>&1
-        RES=$?
-        if [[ ! ${RES} = 0 ]] ; then
-            msg_err
-            error "Error installing packages. Please refer to documentation."
-        fi
-    else
-        apt-get install python-mysqldb -y > /dev/null 2>&1
-        RES=$?
-        if [[ ! ${RES} = 0 ]] ; then
-            msg_err
-            error "Error installing packages. Please refer to documentation."
-        fi
-    fi
-fi
 msg_okay
 
 # Show information
