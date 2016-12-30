@@ -164,7 +164,7 @@ msg "Detected $OS version $OSVER"
 # Install repository
 msg_progress "Adding repository..."
 if [[ ${OS} == "CentOS" ]] || [[ ${OS} == "RHEL" ]] ; then
-    REPO="https://repo.service.chinanetcloud.com/yum/el${OSVER}/base/x86_64/nc-repo-1.0.0-1.el${OSVER}.noarch.rpm"
+    REPO="http://repo.service.chinanetcloud.com/yum/el${OSVER}/base/x86_64/nc-repo-1.0.0-1.el${OSVER}.noarch.rpm"
     # Check if repo already installed
     rpm -qa | grep nc-repo  > /dev/null 2>&1
     RES=$?
@@ -184,7 +184,7 @@ if [[ ${OS} == "CentOS" ]] || [[ ${OS} == "RHEL" ]] ; then
         fi
     fi
 elif [[ ${OS} == "Amazon Linux" ]] ; then
-    REPO="https://repo.service.chinanetcloud.com/yum/amzn/base/x86_64/nc-repo-1.0.0-1.amzn.noarch.rpm"
+    REPO="http://repo.service.chinanetcloud.com/yum/amzn/base/x86_64/nc-repo-1.0.0-1.amzn.noarch.rpm"
     # Check if repo already installed
     rpm -qa | grep nc-repo  > /dev/null 2>&1
     RES=$?
