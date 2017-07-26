@@ -51,7 +51,7 @@ printf "\n"
 printf "${YELLOW}############################################################${NC}\n"
 printf "Welcome to OpsStack - Unified Operations Platform\n"
 printf "                 www.OpsStack.io\n"
-printf "Docs at: http://read.corilla.com/OpsStack/Documentation.html\n"
+printf "Docs at: https://opsstack.readme.io/docs/getting-started\n"
 printf "${YELLOW}############################################################${NC}\n"
 
 # Check if running as root or with sudo
