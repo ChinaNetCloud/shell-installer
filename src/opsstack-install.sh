@@ -101,8 +101,8 @@ elif [[ -f '/etc/system-release' ]] && [[ `cat /etc/system-release` == Amazon* ]
     elif [[ `cat /etc/system-release | awk '{print $5}'` == 2017* ]] ; then
         OSVER="2017"
     # 2015 is last or else will error on cat redhat-release
-    elif [[ `cat /etc/redhat-release | awk '{print $3}'` == 2015* ]] ; then
-        OSVER="2015"
+    elif [[ `cat /etc/system-release | awk '{print $5}'` == 2018* ]] ; then
+        OSVER="2018"
     else
         msg_err
         error "This Amazon Linux version not supported. Please contact support."
