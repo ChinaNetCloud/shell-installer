@@ -101,8 +101,10 @@ elif [[ -f '/etc/system-release' ]] && [[ `cat /etc/system-release` == Amazon* ]
     elif [[ `cat /etc/system-release | awk '{print $5}'` == 2017* ]] ; then
         OSVER="2017"
     # 2015 is last or else will error on cat redhat-release
-    elif [[ `cat /etc/redhat-release | awk '{print $3}'` == 2015* ]] ; then
-        OSVER="2015"
+    elif [[ `cat /etc/system-release | awk '{print $5}'` == 2018* ]] ; then
+        OSVER="2018"
+    elif [[ `cat /etc/system-release ` == "Amazon Linux 2" ]] ; then
+        OSVER="2"
     else
         msg_err
         error "This Amazon Linux version not supported. Please contact support."
@@ -210,7 +212,11 @@ if [[ ${OS} == "CentOS" ]] || [[ ${OS} == "RHEL" ]] ; then
         fi
     fi
 elif [[ ${OS} == "Amazon Linux" ]] ; then
-    REPO="http://repo.service.chinanetcloud.com/yum/amzn/base/x86_64/nc-repo-1.0.0-1.amzn.noarch.rpm"
+    if [[ ${OSVER} == "2" ]];then
+        REPO="http://repo.service.chinanetcloud.com/yum/el7/base/x86_64/nc-repo-1.0.0-1.el7.noarch.rpm"
+    else
+        REPO="http://repo.service.chinanetcloud.com/yum/amzn/base/x86_64/nc-repo-1.0.0-1.amzn.noarch.rpm"
+    fi
     # Check if repo already installed
     rpm -qa | grep nc-repo  > /dev/null 2>&1
     RES=$?
