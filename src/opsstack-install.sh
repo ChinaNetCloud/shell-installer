@@ -328,7 +328,8 @@ echo ""
 ENDPOINT="https://opsstack.chinanetcloud.com"
 
 echo ""
-read -p "Please enter OpsStack URL [${ENDPOINT}]:" ENDPOINT
+echo "Please enter OpsStack URL [Default: ${ENDPOINT}]"
+read -p "Input: " ENDPOINT
 echo ""
 
 
@@ -336,22 +337,27 @@ echo ""
 opsstack-configure --opsstack-host ${ENDPOINT}
 RES=$?
 
-echo ""
-msg "opsstack-configure finished"
-echo ""
-
 # Execute opsstack-install only if opsstack-configure exit with 0
-if [[ ${RES} = 0 ]]; then
+if [[ "${RES}" -eq "0" ]]; then
+    echo ""
+    msg "Configuration complete"
     echo ""
     msg "Executing opsstack-install to add monitoring, collectors, syslog, nctop"
     echo ""
     # Execute opsstack-install
     opsstack-install
     RES=$?
+    if [[ "${RES}" -eq "0" ]]; then
+        echo ""
+        msg "OpsStack installation finished"
+        exit 0
+    else
+        msg_err
+        error "Error running opsstack-install. Please try again or check documentation"
+        exit ${RES}
+    fi
+else
+    msg_err
+    error "Error running opsstack-configure. Please try again or check documentation"
+    exit ${RES}
 fi
-
-echo ""
-msg "opsstack-install finished"
-echo ""
-
-exit ${RES}
