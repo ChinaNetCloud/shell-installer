@@ -323,33 +323,17 @@ printf "${YELLOW}#############################################${NC}\n"
 echo ""
 echo ""
 
-# Get Environment
+# Get OpsStack endpoint
+# Default value
+ENDPOINT="https://opsstack.chinanetcloud.com"
 
-echo "Which OpsStack Region are you in ?"
-echo "1) USA"
-echo "2) China"
 echo ""
-read -p 'Region Num: ' regionenv
+read -p "Please enter OpsStack URL [${ENDPOINT}]:" ENDPOINT
+echo ""
 
-CONFIGARG=''
-if [ "$regionenv" == "1" ]; then
-  REGION='USA'
-  CONFIGARG='--usa'
-elif [ "$regionenv" == "2" ]; then
-  REGION="China"
-  CONFIGARG=''
-elif [ "$regionenv" == "3" ]; then
-  REGION="Dev"
-  CONFIGARG='--dev'
-else
-  echo "Bad Selection - Exiting"
-  exit 1
-fi
-
-printf "\nYour Region is: $REGION \n\n"
 
 # Execute opsstack-configure
-opsstack-configure $CONFIGARG
+opsstack-configure --opsstack-host ${ENDPOINT}
 RES=$?
 
 echo ""
@@ -362,7 +346,7 @@ if [[ ${RES} = 0 ]]; then
     msg "Executing opsstack-install to add monitoring, collectors, syslog, nctop"
     echo ""
     # Execute opsstack-install
-    opsstack-install $CONFIGARG
+    opsstack-install
     RES=$?
 fi
 
