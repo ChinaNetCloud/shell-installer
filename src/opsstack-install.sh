@@ -329,7 +329,10 @@ ENDPOINT="https://opsstack.chinanetcloud.com"
 
 echo ""
 echo "Please enter OpsStack URL [Default: ${ENDPOINT}]"
-read -p "Input: " ENDPOINT
+read -p "Input: " ENDPOINT_INPUT
+if [[ ! -z "$ENDPOINT_INPUT" ]]; then
+    ENDPOINT=${ENDPOINT_INPUT}
+fi
 echo ""
 
 
