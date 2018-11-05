@@ -67,7 +67,7 @@ msg_okay
 msg_progress "Checking Linux platform..."
 if [[ -f "/etc/redhat-release" ]] ; then
     # Apparently redhat, but which one?
-    grep "CentOS" /etc/redhat-release > /dev/null 2>&1
+    out=$(grep "CentOS" /etc/redhat-release 2>&1)
     RES=$?
     if [[ ${RES} = 0 ]] ; then
         OS="CentOS"
@@ -111,7 +111,7 @@ elif [[ -f '/etc/system-release' ]] && [[ `cat /etc/system-release` == Amazon* ]
     fi
 elif [[ -f '/etc/debian_version' ]]; then
     # Apparently debian, but which one?
-    command -V lsb_release > /dev/null 2>&1
+    out=$(command -V lsb_release 2>&1)
     RES=$?
     if [[ ${RES} = 0 ]] ; then
         OS_DESC=`lsb_release -i | awk '{print $3}'`
@@ -194,17 +194,17 @@ msg_progress "Adding repositories ..."
 if [[ ${OS} == "CentOS" ]] || [[ ${OS} == "RHEL" ]] ; then
     REPO="http://repo.service.chinanetcloud.com/yum/el${OSVER}/base/x86_64/nc-repo-1.0.0-1.el${OSVER}.noarch.rpm"
     # Check if repo already installed
-    rpm -qa | grep nc-repo  > /dev/null 2>&1
+    out=$(rpm -qa | grep nc-repo 2>&1)
     RES=$?
     if [[ ${RES} = 0 ]] ; then
-        yum reinstall ${REPO} -y > /dev/null 2>&1
+        out=$(yum reinstall ${REPO} -y 2>&1)
         RES=$?
         if [[ ! ${RES} = 0 ]] ; then
             msg_err
             error "Error installing repository. Please refer to documentation."
         fi
     else
-        yum install ${REPO} -y > /dev/null 2>&1
+        out=$(yum install ${REPO} -y 2>&1)
         RES=$?
         if [[ ! ${RES} = 0 ]] ; then
             msg_err
@@ -218,17 +218,17 @@ elif [[ ${OS} == "Amazon Linux" ]] ; then
         REPO="http://repo.service.chinanetcloud.com/yum/amzn/base/x86_64/nc-repo-1.0.0-1.amzn.noarch.rpm"
     fi
     # Check if repo already installed
-    rpm -qa | grep nc-repo  > /dev/null 2>&1
+    out=$(rpm -qa | grep nc-repo 2>&1)
     RES=$?
     if [[ ${RES} = 0 ]] ; then
-        yum reinstall ${REPO} -y > /dev/null 2>&1
+        out=$(yum reinstall ${REPO} -y 2>&1)
         RES=$?
         if [[ ! ${RES} = 0 ]] ; then
             msg_err
             error "Error installing repository. Please refer to documentation."
         fi
     else
-        yum install ${REPO} -y > /dev/null 2>&1
+        out=$(yum install ${REPO} -y 2>&1)
         RES=$?
         if [[ ! ${RES} = 0 ]] ; then
             msg_err
@@ -238,13 +238,13 @@ elif [[ ${OS} == "Amazon Linux" ]] ; then
 elif [[ ${OS} == "Ubuntu" ]] ; then
     REPO="http://repo.service.chinanetcloud.com/apt/ubuntu/pool/${UBUNTU_OSVER}/main/nc-repo_1.0.0-1.ubuntu%2B${UBUNTU_OSVER}_all.deb"
     # Download repo package and install it
-    wget -q ${REPO} -O /tmp/nc-repo_1.0.0-1.ubuntu.deb > /dev/null 2>&1
+    out=$(wget -q ${REPO} -O /tmp/nc-repo_1.0.0-1.ubuntu.deb 2>&1)
     RES=$?
     if [[ ! ${RES} = 0 ]] ; then
         msg_err
         error "Error downloading nc-repo package. Please refer to documentation."
     else
-        dpkg -i /tmp/nc-repo_1.0.0-1.ubuntu.deb > /dev/null 2>&1
+        out=$(dpkg -i /tmp/nc-repo_1.0.0-1.ubuntu.deb 2>&1)
         RES=$?
         if [[ ! ${RES} = 0 ]] ; then
                 msg_err
@@ -254,13 +254,13 @@ elif [[ ${OS} == "Ubuntu" ]] ; then
 elif [[ ${OS} == "Debian" ]] ; then
     REPO="http://repo.service.chinanetcloud.com/apt/debian/pool/${DEBIAN_OSVER}/main/nc-repo_1.0.0-1.debian%2B${DEBIAN_OSVER}_all.deb"
     # Download repo package and install it
-    wget -q ${REPO} -O /tmp/nc-repo_1.0.0-1.debian.deb > /dev/null 2>&1
+    out=$(wget -q ${REPO} -O /tmp/nc-repo_1.0.0-1.debian.deb 2>&1)
     RES=$?
     if [[ ! ${RES} = 0 ]] ; then
         msg_err
         error "Error downloading nc-repo package. Please refer to documentation."
     else
-        dpkg -i /tmp/nc-repo_1.0.0-1.debian.deb > /dev/null 2>&1
+        out=$(dpkg -i /tmp/nc-repo_1.0.0-1.debian.deb 2>&1)
         RES=$?
         if [[ ! ${RES} = 0 ]] ; then
                 msg_err
@@ -274,17 +274,17 @@ msg_okay
 msg_progress "Installing OpsStack packages..."
 if [[ ${OS} == "CentOS" ]] || [[ ${OS} == "RHEL" ]] || [[ ${OS} == "Amazon Linux" ]] ; then
     # Check if package already installed
-    rpm -qa | grep opsstack-tools > /dev/null 2>&1
+    out=$(rpm -qa | grep opsstack-tools 2>&1)
     RES=$?
     if [[ ${RES} = 0 ]] ; then
-        yum reinstall opsstack-tools -y > /dev/null 2>&1
+        out=$(yum reinstall opsstack-tools -y 2>&1)
         RES=$?
         if [[ ! ${RES} = 0 ]] ; then
             msg_err
             error "Error installing packages. Please refer to documentation."
         fi
     else
-        yum install opsstack-tools -y > /dev/null 2>&1
+        out=$(yum install opsstack-tools -y 2>&1)
         RES=$?
         if [[ ! ${RES} = 0 ]] ; then
             msg_err
@@ -293,19 +293,19 @@ if [[ ${OS} == "CentOS" ]] || [[ ${OS} == "RHEL" ]] || [[ ${OS} == "Amazon Linux
     fi
 elif [[ ${OS} == "Ubuntu" ]] || [[ ${OS} == "Debian" ]]; then
     # Before installing package, update repository first
-    apt-get update > /dev/null 2>&1
+    out=$(apt-get update 2>&1)
     # Check if package already installed
-    dpkg -l |grep opsstack-tools > /dev/null 2>&1
+    out=$(dpkg -l | grep opsstack-tools 2>&1)
     RES=$?
     if [[ ${RES} = 0 ]] ; then
-        apt-get install --reinstall opsstack-tools -y > /dev/null 2>&1
+        out=$(apt-get install --reinstall opsstack-tools -y 2>&1)
         RES=$?
         if [[ ! ${RES} = 0 ]] ; then
             msg_err
             error "Error installing packages. Please refer to documentation."
         fi
     else
-        apt-get install opsstack-tools -y > /dev/null 2>&1
+        out=$(apt-get install opsstack-tools -y 2>&1)
         RES=$?
         if [[ ! ${RES} = 0 ]] ; then
             msg_err
@@ -323,51 +323,44 @@ printf "${YELLOW}#############################################${NC}\n"
 echo ""
 echo ""
 
-# Get Environment
+# Get OpsStack endpoint
+# Default value
+ENDPOINT="https://opsstack.chinanetcloud.com"
 
-echo "Which OpsStack Region are you in ?"
-echo "1) USA"
-echo "2) China"
 echo ""
-read -p 'Region Num: ' regionenv
-
-CONFIGARG=''
-if [ "$regionenv" == "1" ]; then
-  REGION='USA'
-  CONFIGARG='--usa'
-elif [ "$regionenv" == "2" ]; then
-  REGION="China"
-  CONFIGARG=''
-elif [ "$regionenv" == "3" ]; then
-  REGION="Dev"
-  CONFIGARG='--dev'
-else
-  echo "Bad Selection - Exiting"
-  exit 1
+echo "Please enter OpsStack URL [Default: ${ENDPOINT}]"
+read -p "Input: " ENDPOINT_INPUT
+if [[ ! -z "$ENDPOINT_INPUT" ]]; then
+    ENDPOINT=${ENDPOINT_INPUT}
 fi
+echo ""
 
-printf "\nYour Region is: $REGION \n\n"
 
 # Execute opsstack-configure
-opsstack-configure $CONFIGARG
+opsstack-configure --opsstack-host ${ENDPOINT}
 RES=$?
 
-echo ""
-msg "opsstack-configure finished"
-echo ""
-
 # Execute opsstack-install only if opsstack-configure exit with 0
-if [[ ${RES} = 0 ]]; then
+if [[ "${RES}" -eq "0" ]]; then
+    echo ""
+    msg "Configuration complete"
     echo ""
     msg "Executing opsstack-install to add monitoring, collectors, syslog, nctop"
     echo ""
     # Execute opsstack-install
-    opsstack-install $CONFIGARG
+    opsstack-install
     RES=$?
+    if [[ "${RES}" -eq "0" ]]; then
+        echo ""
+        msg "OpsStack installation finished"
+        exit 0
+    else
+        msg_err
+        error "Error running opsstack-install. Please try again or check documentation"
+        exit ${RES}
+    fi
+else
+    msg_err
+    error "Error running opsstack-configure. Please try again or check documentation"
+    exit ${RES}
 fi
-
-echo ""
-msg "opsstack-install finished"
-echo ""
-
-exit ${RES}
