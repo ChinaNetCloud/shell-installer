@@ -125,6 +125,8 @@ elif [[ -f '/etc/debian_version' ]]; then
                 UBUNTU_OSVER="trusty"
             elif [[ ${OS_RELEASE} == 16.* ]]; then
                 UBUNTU_OSVER="xenial"
+            elif [[ ${OS_RELEASE} == 18.* ]]; then
+                UBUNTU_OSVER="xenial"
             else
                 msg_err
                 error "This Ubuntu Linux version not supported. Please contact support."
@@ -145,36 +147,8 @@ elif [[ -f '/etc/debian_version' ]]; then
             error "Unsupported Debian Version. Please contact support."
         fi
     else
-        if [[ `cat /etc/debian_version` == [jsw]* ]]; then
-            OS="Ubuntu"
-            if [[ `cat /etc/debian_version` == wheezy* ]]; then
-                OSVER="12"
-                UBUNTU_OSVER="precise"
-            elif [[ `cat /etc/debian_version` == jessie* ]]; then
-                OSVER="14"
-                UBUNTU_OSVER="trusty"
-            elif [[ `cat /etc/debian_version` == stretch* ]]; then
-                OSVER="16"
-                UBUNTU_OSVER="xenial"
-            else
-                msg_err
-                error "Ubuntu Linux version not supported. Please refer to documentation."
-            fi
-        elif [[ `cat /etc/debian_version` == [78].* ]]; then
-            OS="Debian"
-            OSVER=`cat /etc/debian_version`
-            if [[ `cat /etc/debian_version` == 7.* ]]; then
-                DEBIAN_OSVER="wheezy"
-            elif [[ `cat /etc/debian_version` == 8.* ]]; then
-                DEBIAN_OSVER="jessie"
-            else
-                msg_err
-                error "Unsupported Debian Version. Please contact support."
-            fi
-        else
-            msg_err
-            error "Unsupported Debian Version. Please contact support."
-        fi
+        msg_err
+        error "lsb_release is missing, please install corresponding dependencies."
     fi
 else
     msg_err
