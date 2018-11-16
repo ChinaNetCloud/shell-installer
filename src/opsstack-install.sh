@@ -297,17 +297,23 @@ printf "${YELLOW}#############################################${NC}\n"
 echo ""
 echo ""
 
-# Get OpsStack endpoint
-# Default value
-ENDPOINT="https://opsstack.chinanetcloud.com"
+if [ -z "${OPSSTACK_ENDPOINT}" ]; then
+    # Get OpsStack endpoint
+    # Default value
+    ENDPOINT="https://opsstack.chinanetcloud.com"
 
-echo ""
-echo "Please enter OpsStack URL [Default: ${ENDPOINT}]"
-read -p "Input: " ENDPOINT_INPUT
-if [[ ! -z "$ENDPOINT_INPUT" ]]; then
-    ENDPOINT=${ENDPOINT_INPUT}
+    echo ""
+    echo "Please enter OpsStack URL [Default: ${ENDPOINT}]"
+    read -p "Input: " ENDPOINT_INPUT
+    if [[ ! -z "$ENDPOINT_INPUT" ]]; then
+        ENDPOINT=${ENDPOINT_INPUT}
+    fi
+    echo ""
+else
+    # Set endpoint from existing environment variable
+    ENDPOINT="${OPSSTACK_ENDPOINT}"
+    echo "Using ${ENDPOINT} as OpsStack API Endpoint"
 fi
-echo ""
 
 
 # Execute opsstack-configure
