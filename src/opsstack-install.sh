@@ -317,7 +317,7 @@ fi
 
 
 # Execute opsstack-configure
-opsstack-configure --opsstack-host ${ENDPOINT}
+opsstack-configure --opsstack-endpoint ${ENDPOINT}
 RES=$?
 
 # Execute opsstack-install only if opsstack-configure exit with 0
