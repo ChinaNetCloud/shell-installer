@@ -225,6 +225,13 @@ elif [[ ${OS} == "Ubuntu" ]] ; then
                 error "Error installing repository. Please refer to documentation."
         fi
     fi
+    # Execute apt-add-repository as well
+    out=$(command -V apt-add-repository 2>&1)
+    RES=$?
+    if [[ ${RES} = 0 ]] ; then
+        REPOTEXT=$(cat /etc/apt/sources.list.d/cnc-repo.list)
+        apt-add-repository "${REPOTEXT}"
+    fi
 elif [[ ${OS} == "Debian" ]] ; then
     REPO="http://repo.service.chinanetcloud.com/apt/debian/pool/${DEBIAN_OSVER}/main/nc-repo_1.0.0-1.debian%2B${DEBIAN_OSVER}_all.deb"
     # Download repo package and install it
@@ -240,6 +247,13 @@ elif [[ ${OS} == "Debian" ]] ; then
                 msg_err
                 error "Error installing repository. Please refer to documentation."
         fi
+    fi
+    # Execute apt-add-repository as well
+    out=$(command -V apt-add-repository 2>&1)
+    RES=$?
+    if [[ ${RES} = 0 ]] ; then
+        REPOTEXT=$(cat /etc/apt/sources.list.d/cnc-repo.list)
+        apt-add-repository "${REPOTEXT}"
     fi
 fi
 msg_okay
