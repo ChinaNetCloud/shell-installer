@@ -51,7 +51,7 @@ printf "\n"
 printf "${YELLOW}############################################################${NC}\n"
 printf "Welcome to OpsStack - Unified Operations Platform\n"
 printf "                 www.OpsStack.io\n"
-printf "Docs at: http://read.corilla.com/OpsStack/Documentation.html\n"
+printf "Docs at: https://opsstack.readme.io/docs/getting-started\n"
 printf "${YELLOW}############################################################${NC}\n"
 
 # Check if running as root or with sudo
@@ -125,6 +125,8 @@ elif [[ -f '/etc/debian_version' ]]; then
                 UBUNTU_OSVER="trusty"
             elif [[ ${OS_RELEASE} == 16.* ]]; then
                 UBUNTU_OSVER="xenial"
+            elif [[ ${OS_RELEASE} == 18.* ]]; then
+                UBUNTU_OSVER="xenial"
             else
                 msg_err
                 error "This Ubuntu Linux version not supported. Please contact support."
@@ -145,36 +147,8 @@ elif [[ -f '/etc/debian_version' ]]; then
             error "Unsupported Debian Version. Please contact support."
         fi
     else
-        if [[ `cat /etc/debian_version` == [jsw]* ]]; then
-            OS="Ubuntu"
-            if [[ `cat /etc/debian_version` == wheezy* ]]; then
-                OSVER="12"
-                UBUNTU_OSVER="precise"
-            elif [[ `cat /etc/debian_version` == jessie* ]]; then
-                OSVER="14"
-                UBUNTU_OSVER="trusty"
-            elif [[ `cat /etc/debian_version` == stretch* ]]; then
-                OSVER="16"
-                UBUNTU_OSVER="xenial"
-            else
-                msg_err
-                error "Ubuntu Linux version not supported. Please refer to documentation."
-            fi
-        elif [[ `cat /etc/debian_version` == [78].* ]]; then
-            OS="Debian"
-            OSVER=`cat /etc/debian_version`
-            if [[ `cat /etc/debian_version` == 7.* ]]; then
-                DEBIAN_OSVER="wheezy"
-            elif [[ `cat /etc/debian_version` == 8.* ]]; then
-                DEBIAN_OSVER="jessie"
-            else
-                msg_err
-                error "Unsupported Debian Version. Please contact support."
-            fi
-        else
-            msg_err
-            error "Unsupported Debian Version. Please contact support."
-        fi
+        msg_err
+        error "lsb_release is missing, please install corresponding dependencies."
     fi
 else
     msg_err
@@ -251,6 +225,13 @@ elif [[ ${OS} == "Ubuntu" ]] ; then
                 error "Error installing repository. Please refer to documentation."
         fi
     fi
+    # Execute apt-add-repository as well
+    out=$(command -V apt-add-repository 2>&1)
+    RES=$?
+    if [[ ${RES} = 0 ]] ; then
+        REPOTEXT=$(cat /etc/apt/sources.list.d/cnc-repo.list)
+        apt-add-repository "${REPOTEXT}"
+    fi
 elif [[ ${OS} == "Debian" ]] ; then
     REPO="http://repo.service.chinanetcloud.com/apt/debian/pool/${DEBIAN_OSVER}/main/nc-repo_1.0.0-1.debian%2B${DEBIAN_OSVER}_all.deb"
     # Download repo package and install it
@@ -266,6 +247,13 @@ elif [[ ${OS} == "Debian" ]] ; then
                 msg_err
                 error "Error installing repository. Please refer to documentation."
         fi
+    fi
+    # Execute apt-add-repository as well
+    out=$(command -V apt-add-repository 2>&1)
+    RES=$?
+    if [[ ${RES} = 0 ]] ; then
+        REPOTEXT=$(cat /etc/apt/sources.list.d/cnc-repo.list)
+        apt-add-repository "${REPOTEXT}"
     fi
 fi
 msg_okay
@@ -323,21 +311,27 @@ printf "${YELLOW}#############################################${NC}\n"
 echo ""
 echo ""
 
-# Get OpsStack endpoint
-# Default value
-ENDPOINT="https://opsstack.chinanetcloud.com"
+if [ -z "${OPSSTACK_ENDPOINT}" ]; then
+    # Get OpsStack endpoint
+    # Default value
+    ENDPOINT="https://opsstack.chinanetcloud.com"
 
-echo ""
-echo "Please enter OpsStack URL [Default: ${ENDPOINT}]"
-read -p "Input: " ENDPOINT_INPUT
-if [[ ! -z "$ENDPOINT_INPUT" ]]; then
-    ENDPOINT=${ENDPOINT_INPUT}
+    echo ""
+    echo "Please enter OpsStack URL [Default: ${ENDPOINT}]"
+    read -p "Input: " ENDPOINT_INPUT
+    if [[ ! -z "$ENDPOINT_INPUT" ]]; then
+        ENDPOINT=${ENDPOINT_INPUT}
+    fi
+    echo ""
+else
+    # Set endpoint from existing environment variable
+    ENDPOINT="${OPSSTACK_ENDPOINT}"
+    echo "Using ${ENDPOINT} as OpsStack API Endpoint"
 fi
-echo ""
 
 
 # Execute opsstack-configure
-opsstack-configure --opsstack-host ${ENDPOINT}
+opsstack-configure --opsstack-endpoint ${ENDPOINT}
 RES=$?
 
 # Execute opsstack-install only if opsstack-configure exit with 0
